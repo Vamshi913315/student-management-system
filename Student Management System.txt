@@ -1,0 +1,137 @@
+/*
+ * Main.java
+ * Student Management System using ArrayList & HashMap — fixed import errors.
+ * Save this file as Main.java and compile with: javac Main.java
+ * Run with: java Main
+ */
+
+import java.util.*;
+
+class Student {
+    private int id;
+    private String name;
+    private int age;
+
+    public Student(int id, String name, int age) {
+        this.id = id;
+        this.name = name;
+        this.age = age;
+    }
+
+    public int getId() { return id; }
+    public String getName() { return name; }
+    public int getAge() { return age; }
+
+    @Override
+    public String toString() {
+        return "Student{ID=" + id + ", Name='" + name + "', Age=" + age + "}";
+    }
+}
+
+class StudentManager {
+    private ArrayList<Student> studentList = new ArrayList<>();
+    private HashMap<Integer, Student> studentMap = new HashMap<>();
+
+    public boolean addStudent(Student s) {
+        if (studentMap.containsKey(s.getId())) {
+            return false;
+        }
+        studentList.add(s);
+        studentMap.put(s.getId(), s);
+        return true;
+    }
+
+    public void displayStudents() {
+        if (studentList.isEmpty()) {
+            System.out.println("No students available.");
+            return;
+        }
+        System.out.println("\n--- Student List ---");
+        for (Student s : studentList) {
+            System.out.println(s);
+        }
+    }
+
+    public Student searchStudent(int id) {
+        return studentMap.get(id);
+    }
+
+    public boolean deleteStudent(int id) {
+        Student removed = studentMap.remove(id);
+        if (removed != null) {
+            studentList.remove(removed);
+            return true;
+        }
+        return false;
+    }
+}
+
+public class Main {
+    private static final Scanner sc = new Scanner(System.in);
+
+    public static void main(String[] args) {
+        StudentManager sms = new StudentManager();
+
+        while (true) {
+            showMenu();
+            int choice = readInt("Choose option: ");
+
+            switch (choice) {
+                case 1:
+                    int id = readInt("Enter ID: ");
+                    String name = readLine("Enter Name: ");
+                    int age = readInt("Enter Age: ");
+                    boolean added = sms.addStudent(new Student(id, name, age));
+                    if (added) System.out.println("Student added.");
+                    else System.out.println("Student with ID " + id + " already exists.");
+                    break;
+                case 2:
+                    sms.displayStudents();
+                    break;
+                case 3:
+                    int searchId = readInt("Enter ID to search: ");
+                    Student found = sms.searchStudent(searchId);
+                    if (found != null) System.out.println("Found: " + found);
+                    else System.out.println("No student with ID " + searchId);
+                    break;
+                case 4:
+                    int delId = readInt("Enter ID to delete: ");
+                    if (sms.deleteStudent(delId)) System.out.println("Deleted student with ID " + delId);
+                    else System.out.println("No student with ID " + delId);
+                    break;
+                case 5:
+                    System.out.println("Exiting...");
+                    sc.close();
+                    return;
+                default:
+                    System.out.println("Invalid option.");
+            }
+        }
+    }
+
+    private static void showMenu() {
+        System.out.println("\n===== Student Management System =====");
+        System.out.println("1. Add Student");
+        System.out.println("2. Display All Students");
+        System.out.println("3. Search Student by ID");
+        System.out.println("4. Delete Student by ID");
+        System.out.println("5. Exit");
+    }
+
+    private static int readInt(String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            String line = sc.nextLine().trim();
+            try {
+                return Integer.parseInt(line);
+            } catch (NumberFormatException e) {
+                System.out.println("Please enter a valid integer.");
+            }
+        }
+    }
+
+    private static String readLine(String prompt) {
+        System.out.print(prompt);
+        return sc.nextLine().trim();
+    }
+}
